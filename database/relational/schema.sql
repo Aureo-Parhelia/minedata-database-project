@@ -1,5 +1,5 @@
 -- ============================================================
--- SCRIPT DDL: BASE DE DATOS RELACIONAL CORE (MINEDATA)
+-- SCRIPT DDL: BASE DE DATOS RELACIONAL (MINEDATA)
 -- ============================================================
 CREATE TABLE audit_log
 (
