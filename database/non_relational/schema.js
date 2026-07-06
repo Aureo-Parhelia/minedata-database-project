@@ -1,5 +1,5 @@
 // ============================================================
-// SCRIPT DE VALIDACIÓN: ENFOQUE NO RELACIONAL (MONGODB) - CORREGIDO
+// SCRIPT DE VALIDACIÓN: ENFOQUE NO RELACIONAL (MONGODB)
 // ============================================================
 
 use MINEDATA_NOTSQL;
@@ -29,8 +29,7 @@ db.createCollection("mineral_batch", {
                     "bsonType": "object",
                     "properties": {
                         "id_reception": { "bsonType": "int" },
-                        "reception_date": { "bsonType": "date" } // Corregido de 'string' a 'date'
-                    },
+                        "reception_date": { "bsonType": "date" } 
                     "additionalProperties": false,
                     "required": ["id_reception", "reception_date"]
                 },
