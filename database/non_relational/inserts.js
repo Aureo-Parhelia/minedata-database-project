@@ -1,5 +1,5 @@
 // ============================================================================
-// SCRIPT DE INSERCIÓN MASIVA: ENFOQUE NO RELACIONAL (MONGODB)
+// SCRIPT DE INSERCION MASIVA: ENFOQUE NO RELACIONAL (MONGODB)
 // ============================================================================
 
 use MINEDATA_NOTSQL;
@@ -10,24 +10,24 @@ db.laboratory_analysis.deleteMany({});
 db.metallurgical_process.deleteMany({});
 
 // ============================================================================
-// 1. COLECCIÓN: mineral_batch (15 Lotes en Tolva de Gruesos / Planta)
+// 1. COLECCION: mineral_batch 
 // ============================================================================
 db.mineral_batch.insertMany([
-    { "batch_code": "LOT-202607-001", "batch_weight_tons": 1250.45, "entry_status": "Procesado", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5001, "reception_date": "2026-07-01T08:30:00Z" }, "id_batch": 1 },
-    { "batch_code": "LOT-202607-002", "batch_weight_tons": 980.20, "entry_status": "Procesado", "ganga": { "id_ganga": 102, "mineral_name": "Calcita y Arcillas" }, "mineral_reception": { "id_reception": 5002, "reception_date": "2026-07-01T11:15:00Z" }, "id_batch": 2 },
-    { "batch_code": "LOT-202607-003", "batch_weight_tons": 1500.00, "entry_status": "En Proceso", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5003, "reception_date": "2026-07-02T06:00:00Z" }, "id_batch": 3 },
-    { "batch_code": "LOT-202607-004", "batch_weight_tons": 1100.15, "entry_status": "En Proceso", "ganga": { "id_ganga": 103, "mineral_name": "Feldespatos" }, "mineral_reception": { "id_reception": 5004, "reception_date": "2026-07-02T14:20:00Z" }, "id_batch": 4 },
-    { "batch_code": "LOT-202607-005", "batch_weight_tons": 1340.80, "entry_status": "En Espera", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5005, "reception_date": "2026-07-03T01:10:00Z" }, "id_batch": 5 },
-    { "batch_code": "LOT-202607-006", "batch_weight_tons": 890.50, "entry_status": "En Espera", "ganga": { "id_ganga": 104, "mineral_name": "Dolomita" }, "mineral_reception": { "id_reception": 5006, "reception_date": "2026-07-03T07:45:00Z" }, "id_batch": 6 },
-    { "batch_code": "LOT-202607-007", "batch_weight_tons": 1610.00, "entry_status": "En Espera", "ganga": { "id_ganga": 102, "mineral_name": "Calcita y Arcillas" }, "mineral_reception": { "id_reception": 5007, "reception_date": "2026-07-03T18:30:00Z" }, "id_batch": 7 },
-    { "batch_code": "LOT-202607-008", "batch_weight_tons": 1420.25, "entry_status": "En Espera", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5008, "reception_date": "2026-07-04T02:00:00Z" }, "id_batch": 8 },
-    { "batch_code": "LOT-202607-009", "batch_weight_tons": 1180.00, "entry_status": "En Espera", "ganga": { "id_ganga": 103, "mineral_name": "Feldespatos" }, "mineral_reception": { "id_reception": 5009, "reception_date": "2026-07-04T09:15:00Z" }, "id_batch": 9 },
-    { "batch_code": "LOT-202607-010", "batch_weight_tons": 1050.60, "entry_status": "En Espera", "ganga": { "id_ganga": 105, "mineral_name": "Siderita" }, "mineral_reception": { "id_reception": 5010, "reception_date": "2026-07-04T13:00:00Z" }, "id_batch": 10 },
-    { "batch_code": "LOT-202607-011", "batch_weight_tons": 1310.40, "entry_status": "En Espera", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5011, "reception_date": "2026-07-04T16:45:00Z" }, "id_batch": 11 },
-    { "batch_code": "LOT-202607-012", "batch_weight_tons": 950.00, "entry_status": "En Espera", "ganga": { "id_ganga": 102, "mineral_name": "Calcita y Arcillas" }, "mineral_reception": { "id_reception": 5012, "reception_date": "2026-07-04T21:00:00Z" }, "id_batch": 12 },
-    { "batch_code": "LOT-202607-013", "batch_weight_tons": 1225.50, "entry_status": "En Espera", "ganga": { "id_ganga": 104, "mineral_name": "Dolomita" }, "mineral_reception": { "id_reception": 5013, "reception_date": "2026-07-05T02:30:00Z" }, "id_batch": 13 },
-    { "batch_code": "LOT-202607-014", "batch_weight_tons": 1480.00, "entry_status": "En Espera", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5014, "reception_date": "2026-07-05T05:15:00Z" }, "id_batch": 14 },
-    { "batch_code": "LOT-202607-015", "batch_weight_tons": 1150.35, "entry_status": "En Espera", "ganga": { "id_ganga": 103, "mineral_name": "Feldespatos" }, "mineral_reception": { "id_reception": 5015, "reception_date": "2026-07-05T08:00:00Z" }, "id_batch": 15 }
+    { "batch_code": "LOT-202607-001", "batch_weight_tons": 1250.45, "entry_status": "Procesado", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5001, "reception_date": ISODate("2026-07-01T08:30:00Z") }, "id_batch": 1 },
+    { "batch_code": "LOT-202607-002", "batch_weight_tons": 980.20, "entry_status": "Procesado", "ganga": { "id_ganga": 102, "mineral_name": "Calcita y Arcillas" }, "mineral_reception": { "id_reception": 5002, "reception_date": ISODate("2026-07-01T11:15:00Z") }, "id_batch": 2 },
+    { "batch_code": "LOT-202607-003", "batch_weight_tons": 1500.00, "entry_status": "En Proceso", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5003, "reception_date": ISODate("2026-07-02T06:00:00Z") }, "id_batch": 3 },
+    { "batch_code": "LOT-202607-004", "batch_weight_tons": 1100.15, "entry_status": "En Proceso", "ganga": { "id_ganga": 103, "mineral_name": "Feldespatos" }, "mineral_reception": { "id_reception": 5004, "reception_date": ISODate("2026-07-02T14:20:00Z") }, "id_batch": 4 },
+    { "batch_code": "LOT-202607-005", "batch_weight_tons": 1340.80, "entry_status": "En Espera", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5005, "reception_date": ISODate("2026-07-03T01:10:00Z") }, "id_batch": 5 },
+    { "batch_code": "LOT-202607-006", "batch_weight_tons": 890.50, "entry_status": "En Espera", "ganga": { "id_ganga": 104, "mineral_name": "Dolomita" }, "mineral_reception": { "id_reception": 5006, "reception_date": ISODate("2026-07-03T07:45:00Z") }, "id_batch": 6 },
+    { "batch_code": "LOT-202607-007", "batch_weight_tons": 1610.00, "entry_status": "En Espera", "ganga": { "id_ganga": 102, "mineral_name": "Calcita y Arcillas" }, "mineral_reception": { "id_reception": 5007, "reception_date": ISODate("2026-07-03T18:30:00Z") }, "id_batch": 7 },
+    { "batch_code": "LOT-202607-008", "batch_weight_tons": 1420.25, "entry_status": "En Espera", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5008, "reception_date": ISODate("2026-07-04T02:00:00Z") }, "id_batch": 8 },
+    { "batch_code": "LOT-202607-009", "batch_weight_tons": 1180.00, "entry_status": "En Espera", "ganga": { "id_ganga": 103, "mineral_name": "Feldespatos" }, "mineral_reception": { "id_reception": 5009, "reception_date": ISODate("2026-07-04T09:15:00Z") }, "id_batch": 9 },
+    { "batch_code": "LOT-202607-010", "batch_weight_tons": 1050.60, "entry_status": "En Espera", "ganga": { "id_ganga": 105, "mineral_name": "Siderita" }, "mineral_reception": { "id_reception": 5010, "reception_date": ISODate("2026-07-04T13:00:00Z") }, "id_batch": 10 },
+    { "batch_code": "LOT-202607-011", "batch_weight_tons": 1310.40, "entry_status": "En Espera", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5011, "reception_date": ISODate("2026-07-04T16:45:00Z") }, "id_batch": 11 },
+    { "batch_code": "LOT-202607-012", "batch_weight_tons": 950.00, "entry_status": "En Espera", "ganga": { "id_ganga": 102, "mineral_name": "Calcita y Arcillas" }, "mineral_reception": { "id_reception": 5012, "reception_date": ISODate("2026-07-04T21:00:00Z") }, "id_batch": 12 },
+    { "batch_code": "LOT-202607-013", "batch_weight_tons": 1225.50, "entry_status": "En Espera", "ganga": { "id_ganga": 104, "mineral_name": "Dolomita" }, "mineral_reception": { "id_reception": 5013, "reception_date": ISODate("2026-07-05T02:30:00Z") }, "id_batch": 13 },
+    { "batch_code": "LOT-202607-014", "batch_weight_tons": 1480.00, "entry_status": "En Espera", "ganga": { "id_ganga": 101, "mineral_name": "Cuarzo y Pirita" }, "mineral_reception": { "id_reception": 5014, "reception_date": ISODate("2026-07-05T05:15:00Z") }, "id_batch": 14 },
+    { "batch_code": "LOT-202607-015", "batch_weight_tons": 1150.35, "entry_status": "En Espera", "ganga": { "id_ganga": 103, "mineral_name": "Feldespatos" }, "mineral_reception": { "id_reception": 5015, "reception_date": ISODate("2026-07-05T08:00:00Z") }, "id_batch": 15 }
 ]);
 
 // ============================================================================
