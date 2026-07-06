@@ -24,7 +24,7 @@ db.createCollection("mineral_batch", {
                     "bsonType": "object",
                     "properties": {
                         "id_reception": { "bsonType": "int" },
-                        "reception_date": { "bsonType": "string" }
+                        "reception_date": { "bsonType": "date" } 
                     },
                     "additionalProperties": false,
                     "required": ["id_reception", "reception_date"]
