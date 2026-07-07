@@ -1,4 +1,6 @@
-use MINEDATA_NOTSQL;
+
+
+use("MINEDATA_SOLUTION"); 
 
 db.createCollection("laboratory_analysis", {
     "capped": false,
@@ -7,29 +9,37 @@ db.createCollection("laboratory_analysis", {
             "bsonType": "object",
             "title": "laboratory_analysis",
             "properties": {
-                "_id": { "bsonType": "objectId" },
-                "id_analysis": { "bsonType": "int" },
-                "analysis_code": { "bsonType": "string" },
-                "analysis_date": { "bsonType": "date" },
-                "id_batch": { "bsonType": "int" },
+                "_id": {
+                    "bsonType": "objectId"
+                },
+                "analysis_code": {
+                    "bsonType": "string"
+                },
+                "analysis_date": {
+                    "bsonType": "date"
+                },
+                "batch_code": {
+                    "bsonType": "string"
+                },
                 "sieve_analysis": {
                     "bsonType": "array",
-                    "items": {
-                        "bsonType": "object",
-                        "properties": {
-                            "mesh_number": { "bsonType": "string" },
-                            "weight_retained": { "bsonType": "double" },
-                            "percentage_passing": { "bsonType": "double" }
+                    "additionalItems": true,
+                    "items": [
+                        {
+                            "bsonType": "string"
                         },
-                        "additionalProperties": false,
-                        "required": ["mesh_number", "weight_retained", "percentage_passing"]
-                    }
+                        {
+                            "bsonType": "double"
+                        },
+                        {
+                            "bsonType": "string"
+                        }
+                    ]
                 }
             },
-            "additionalProperties": false,
-            "required": ["id_analysis", "analysis_code", "analysis_date", "id_batch", "sieve_analysis"]
+            "additionalProperties": false
         }
     },
-    "validationLevel": "strict",
-    "validationAction": "error"
+    "validationLevel": "off",
+    "validationAction": "warn"
 });
