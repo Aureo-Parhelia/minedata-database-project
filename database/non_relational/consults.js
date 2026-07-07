@@ -3,135 +3,221 @@
 // PROYECTO: MINEDATA - SISTEMA DE CONTROL METALÚRGICO
 // ============================================================================
 
-use MINEDATA_NOTSQL;
-
-// ----------------------------------------------------------------------------
-// OPERACIÓN 1: Inserción atómica de un nuevo análisis de laboratorio
-// ----------------------------------------------------------------------------
-db.laboratory_analysis.insertOne({
-    "id_analysis": 311,
-    "analysis_code": "LAB-AN-2026-104",
-    "analysis_date": ISODate("2026-07-04T18:00:00Z"),
-    "id_batch": 4,
-    "sieve_analysis": [
-        { "mesh_number": "Malla 65", "weight_retained": 38.2, "percentage_passing": 96.10 },
-        { "mesh_number": "Malla 200", "weight_retained": 390.5, "percentage_passing": 44.15 }
-    ]
-});
-
-// ----------------------------------------------------------------------------
-// OPERACIÓN 2: Actualización del estado operativo de un lote específico
-// ----------------------------------------------------------------------------
-db.mineral_batch.updateOne(
-    { "batch_code": "LOT-202607-003" },
-    { $set: { "entry_status": "Procesado" } }
-);
-
-// ----------------------------------------------------------------------------
-// OPERACIÓN 3: Búsqueda de lotes masivos con presencia de Cuarzo en Ganga
-// ----------------------------------------------------------------------------
-db.mineral_batch.find(
-    { 
-        "batch_weight_tons": { $gte: 1200.00 }, 
-        "ganga.mineral_name": { $regex: "Cuarzo", $options: "i" } 
-    },
-    { "batch_code": 1, "batch_weight_tons": 1, "ganga.mineral_name": 1, "_id": 0 }
-);
-
-// ----------------------------------------------------------------------------
-// OPERACIÓN 4: Localización de procesos en molienda primaria (Equipo MB-02)
-// ----------------------------------------------------------------------------
-db.metallurgical_process.find(
-    { "operation_equipment.equipment_code": "MB-02" },
-    { "id_process": 1, "worker.last_name": 1, "start_date_time": 1, "_id": 0 }
-);
-
-// ----------------------------------------------------------------------------
-// OPERACIÓN 5: Cálculo del tonelaje total acumulado por estado operativo
-// ----------------------------------------------------------------------------
-db.mineral_batch.aggregate([
-    { 
-        $group: { 
-            _id: "$entry_status", 
-            total_toneladas: { $sum: "$batch_weight_tons" }, 
-            total_lotes: { $sum: 1 } 
-        } 
-    },
-    { $sort: { total_toneladas: -1 } }
-]);
-
-// ----------------------------------------------------------------------------
-// OPERACIÓN 6: Conteo de fallas de telemetría (fuera de rango) por equipo
-// Optimizada: Aplica $match previo al $unwind para reducir consumo de memoria.
-// ----------------------------------------------------------------------------
-db.metallurgical_process.aggregate([
-    { $match: { "process_measurement.is_out_range": true } },
-    { $unwind: "$process_measurement" },
-    { $match: { "process_measurement.is_out_range": true } },
-    { 
-        $group: { 
-            _id: "$operation_equipment.equipment_name", 
-            total_alertas: { $sum: 1 } 
-        } 
-    },
-    { $sort: { total_alertas: -1 } }
-]);
-
-// ----------------------------------------------------------------------------
-// OPERACIÓN 7: Promedio de paso granulométrico por tipo de malla de control
-// ----------------------------------------------------------------------------
-db.laboratory_analysis.aggregate([
-    { $unwind: "$sieve_analysis" },
-    { 
-        $group: { 
-            _id: "$sieve_analysis.mesh_number", 
-            promedio_pasante: { $avg: "$sieve_analysis.percentage_passing" } 
-        } 
-    },
-    { $sort: { promedio_pasante: -1 } }
-]);
-
-// ----------------------------------------------------------------------------
-// OPERACIÓN 8: Resumen de carga de trabajo (mediciones supervisadas) por operador
-// ----------------------------------------------------------------------------
-db.metallurgical_process.aggregate([
-    { 
-        $project: { 
-            operador: { $concat: ["$worker.first_name", " ", "$worker.last_name"] },
-            total_mediciones: { $size: "$process_measurement" }
-        } 
-    },
-    { 
-        $group: { 
-            _id: "$operador", 
-            total_lecturas_guardia: { $sum: "$total_mediciones" } 
-        } 
-    },
-    { $sort: { total_lecturas_guardia: -1 } }
-]);
-
-/* ----------------------------------------------------------------------------
- OPERACIÓN 9: Extracción del valor máximo histórico registrado por telemetría
- Optimizada: Reduce los documentos proyectando el campo del array directamente.
- ---------------------------------------------------------------------------- */
-db.metallurgical_process.aggregate([
-    { $unwind: "$process_measurement" },
-    { $sort: { "process_measurement.recorded_value": -1 } },
-    { $limit: 1 },
-    { 
-        $project: { 
-            _id: 0,
-            "id_process": 1, 
-            "operation_equipment.equipment_code": 1, 
-            "max_valor": "$process_measurement.recorded_value" 
-        } 
+/*Consulta 1: Balance de Masa Crítico - Encontrar lotes procesados con alta carga 
+volumétrica (>2500 toneladas) cuya roca estéril (ganga) sea de composición compleja 
+("cuarzo", "silice" o "pirita")
+*/
+db.mineral_batch.find({
+  $and: [
+    { "batch_weight_tons": { $gt: 2500 } },
+    { "entry_status": { $in: ["Processed", "processed"] } },
+    {
+      $or: [
+        { "ganga.description": { $regex: "cuarzo", $options: "i" } },
+        { "ganga.description": { $regex: "silice", $options: "i" } },
+        { "ganga.description": { $regex: "pirita", $options: "i" } }
+      ]
     }
+  ]
+});
+
+/*Consulta 2: Reporte de Espera en Tolva - Listar los códigos de lote, fecha de 
+recepción y cálculo estimado de espacio requerido de lotes estancados en estado 
+"Pending", ordenados de mayor a menor tonelaje bruto
+*/
+db.mineral_batch.find(
+  { "entry_status": { $in: ["Pending", "pending"] } },
+  { "_id": 0, "batch_code": 1, "toneladas_brutas": "$batch_weight_tons", 
+    "fecha_ingreso": "$mineral_reception.reception_date" }
+).sort({ "batch_weight_tons": -1 });
+
+/*Consulta 3: Auditoría Operativa de Turno - Buscar procesos metalúrgicos críticos 
+operados en celdas de flotación donde el personal asignado pertenezca a la familia de 
+operadores calificados (Mamani Quispe o Coaquira Lima)
+*/
+db.metallurgical_process.find({
+  $and: [
+    { "operation_equipament.equipment_code": "EQ-005" },
+    {
+      $or: [
+        { "worker.first_name": "Carlos", "worker.last_name": "Mamani Quispe" },
+        { "worker.first_name": "Ana", "worker.last_name": "Coaquira Lima" }
+      ]
+    }
+  ]
+});
+
+/*Consulta 4: Trazabilidad de Ensayos Recientes - Obtener los últimos 3 análisis 
+granulométricos realizados en el laboratorio metalúrgico saltándose los primeros 
+2 registros para auditoría intermedia
+*/
+db.laboratory_analysis.find()
+  .sort({ "analysis_date": -1 })
+  .skip(2)
+  .limit(3);
+
+
+/*Consulta 5: Control Regulatorio de Equipamiento - Localizar procesos donde se haya
+ utilizado maquinaria específica de chancado o flotación (EQ-001 o EQ-005) evaluando 
+ únicamente procesos concluidos con fecha extrema
+*/
+db.metallurgical_process.find({
+  "operation_equipament.equipment_code": { $in: ["EQ-001", "EQ-005"] },
+  "end_date_time": { $exists: true }
+});
+
+/*Consulta 6: Monitoreo de Alarmas SCADA - Detectar eventos fuera de rango operativo
+ (Alerta de desviación = 1) ocurridos estrictamente durante el año fiscal histórico 2024
+*/
+db.metallurgical_process.find({
+  "process_measurement.0": 1,
+  "start_date_time": {
+    $gte: ISODate("2024-01-01T00:00:00Z"),
+    $lte: ISODate("2024-12-31T23:59:59Z")
+  }
+});
+
+
+/*Consulta 7: Control de Calidad granulométrica - Buscar análisis de laboratorio que 
+ejecuten el tamizado bajo el estándar de mallas gruesas o medias (#10) y que 
+simultáneamente reporten un peso de mineral retenido alto (>12.00 gramos)
+*/
+db.laboratory_analysis.find({
+  "sieve_analysis.0": "#10",
+  "sieve_analysis.1": { $gt: 12.00 }
+});
+
+
+/*Consulta 8: Alertas Críticas por Desviación Química - Filtrar procesos de flotación 
+donde el pH o la densidad de pulpa (índice 1 del array) supere los límites de seguridad 
+química establecidos en 11.50 unidades
+*/
+db.metallurgical_process.find({
+  "process_measurement.1": { $gt: 11.50 },
+  "process_parameter.parameter_name": { $exists: true }
+});
+
+/*Consulta 9: Calcular el total de toneladas de mineral bruto ingresadas a la planta
+ concentradora según la descripción de la Ganga
+*/
+db.mineral_batch.aggregate([
+  {
+    $group: {
+      "_id": "$ganga.description",
+      "total_toneladas": { $sum: "$batch_weight_tons" },
+      "cantidad_lotes": { $sum: 1 }
+    }
+  },
+  { $sort: { "total_toneladas": -1 } }
 ]);
 
-// ----------------------------------------------------------------------------
-// OPERACIÓN 10: Depuración segura de registros inconsistentes o rechazados
-// ----------------------------------------------------------------------------
-db.mineral_batch.deleteMany({ 
-    "batch_weight_tons": { $lte: 0.00 },
-    "entry_status": "Rechazado" 
+/*Consulta 10: Obtener el ranking de los equipos industriales que acumularon la mayor 
+cantidad de alertas por encima del rango operativo
+*/
+db.metallurgical_process.aggregate([
+  { $match: { "process_measurement.0": 1 } },
+  {
+    $group: {
+      "_id": {
+        "codigo": "$operation_equipament.equipment_code",
+        "nombre": "$operation_equipament.equipment_name"
+      },
+      "total_alertas_fuera_rango": { $sum: 1 }
+    }
+  },
+  { $sort: { "total_alertas_fuera_rango": -1 } }
+]);
+
+/*Consulta 11: Mostrar la cantidad total de procesos metalúrgicos ejecutados y 
+controlados por cada trabajador asignado a planta
+*/
+db.metallurgical_process.aggregate([
+  {
+    $group: {
+      "_id": {
+        "id_trabajador": "$worker.id_worker",
+        "nombre_completo": { $concat: ["$worker.first_name", " ", "$worker.last_name"] }
+      },
+      "total_procesos_operados": { $sum: 1 }
+    }
+  },
+  { $sort: { "total_procesos_operados": -1 } }
+]);
+
+/*Consulta 12: Extraer el valor promedio y el valor máximo de los pesos 
+retenidos en los ensayos granulométricos de laboratorio
+*/
+db.laboratory_analysis.aggregate([
+  {
+    $group: {
+      "_id": null,
+      "promedio_peso_retenido": { $avg: "$sieve_analysis.1" },
+      "maximo_peso_retenido": { $max: "$sieve_analysis.1" }
+    }
+  }
+]);
+
+/*Consulta 13: Identificar procesos críticos en la flotación donde el pH de la 
+Pulpa registre valores fuera de rango operacional (menores a 9.6 o mayores a 11.0)*/
+
+db.metallurgical_process.find({
+  "process_parameter.parameter_name": "pH de Pulpa",
+  $or: [
+    { "process_measurement.1": { $lt: 9.60 } },
+    { "process_measurement.1": { $gt: 11.00 } }
+  ]
+},
+{
+  "_id": 0,
+  "id_batch": 1,
+  "process_parameter.parameter_name": 1,
+  "process_measurement": 1
 });
+/*Consulta 14: Clasificar de manera dinámica los lotes de mineral según su tonelaje
+ bruto en categorías de volumen de carga para la tolva
+*/
+db.mineral_batch.aggregate([
+  {
+    $project: {
+      "_id": 0,
+      "batch_code": 1,
+      "batch_weight_tons": 1,
+      "categoria_volumen_carga": {
+        $switch: {
+          "branches": [
+            { "case": { $lt: ["$batch_weight_tons", 2000.0] }, "then": "Carga Baja" },
+            { "case": { $and: [{ $gte: ["$batch_weight_tons", 2000.0] }, 
+                                { $lte: ["$batch_weight_tons", 3000.0] }] }, "then": "Carga Estándar" }
+          ],
+          "default": "Carga Masiva (Requiere Almacén Externo)"
+        }
+      }
+    }
+  }
+]);
+
+/*Consulta 15: Cruzar la información transaccional de los procesos metalúrgicos con
+ los datos maestros del lote de mineral correspondiente
+*/
+db.metallurgical_process.aggregate([
+  {
+    $lookup: {
+      "from": "mineral_batch",
+      "localField": "id_batch",
+      "foreignField": "mineral_reception.id_reception",
+      "as": "datos_lote"
+    }
+  },
+  { $unwind: { "path": "$datos_lote", "preserveNullAndEmptyArrays": true } },
+  {
+    $project: {
+      "_id": 0,
+      "fecha_proceso": "$start_date_time",
+      "maquinaria": "$operation_equipament.equipment_name",
+      "codigo_lote_comprobado": "$datos_lote.batch_code",
+      "tonelaje_lote": "$datos_lote.batch_weight_tons",
+      "estado_recepcion": "$datos_lote.entry_status"
+    }
+  },
+  { $limit: 5 }
+]);
