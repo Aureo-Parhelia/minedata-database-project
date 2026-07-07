@@ -1,6 +1,13 @@
 -- ============================================================
 -- SCRIPT DDL: BASE DE DATOS RELACIONAL (MINEDATA)
 -- ============================================================
+
+create database MINEDATA_SOLUTION 
+go 
+
+use MINEDATA_SOLUTION 
+go
+
 CREATE TABLE audit_log
 (
   id_log           INT          NOT NULL IDENTITY(1,1),
