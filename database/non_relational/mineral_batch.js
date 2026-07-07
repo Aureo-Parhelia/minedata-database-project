@@ -1,4 +1,5 @@
-use MINEDATA_NOTSQL;
+
+use("MINEDATA_SOLUTION"); 
 
 db.createCollection("mineral_batch", {
     "capped": false,
@@ -7,34 +8,52 @@ db.createCollection("mineral_batch", {
             "bsonType": "object",
             "title": "mineral_batch",
             "properties": {
-                "_id": { "bsonType": "objectId" },
-                "batch_code": { "bsonType": "string" },
-                "batch_weight_tons": { "bsonType": "double" },
-                "entry_status": { "bsonType": "string" },
+                "_id": {
+                    "bsonType": "objectId"
+                },
+                "batch_code": {
+                    "bsonType": "string"
+                },
+                "batch_weight_tons": {
+                    "bsonType": "double"
+                },
+                "entry_status": {
+                    "bsonType": "string"
+                },
                 "ganga": {
                     "bsonType": "object",
                     "properties": {
-                        "id_ganga": { "bsonType": "int" },
-                        "mineral_name": { "bsonType": "string" }
+                        "id_ganga": {
+                            "bsonType": "string"
+                        },
+                        "description": {
+                            "bsonType": "string"
+                        }
                     },
-                    "additionalProperties": false,
-                    "required": ["id_ganga", "mineral_name"]
+                    "additionalProperties": false
                 },
                 "mineral_reception": {
                     "bsonType": "object",
                     "properties": {
-                        "id_reception": { "bsonType": "int" },
-                        "reception_date": { "bsonType": "date" } 
+                        "id_reception": {
+                            "bsonType": "int"
+                        },
+                        "reception_date": {
+                            "bsonType": "string"
+                        }
                     },
-                    "additionalProperties": false,
-                    "required": ["id_reception", "reception_date"]
-                },
-                "id_batch": { "bsonType": "int" }
+                    "additionalProperties": false
+                }
             },
             "additionalProperties": false,
-            "required": ["batch_code", "batch_weight_tons", "entry_status", "ganga", "mineral_reception", "id_batch"]
+            "required": [
+                "batch_weight_tons",
+                "entry_status",
+                "ganga",
+                "mineral_reception"
+            ]
         }
     },
-    "validationLevel": "strict",
-    "validationAction": "error"
+    "validationLevel": "off",
+    "validationAction": "warn"
 });
