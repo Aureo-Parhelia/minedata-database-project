@@ -1,195 +1,309 @@
 -- ============================================================================
 -- SCRIPT DE CONSULTAS, FUNCIONES Y PROCEDIMIENTOS RELACIONALES (SQL)
 -- ============================================================================
--- Consulta 1: Resumen de tonelaje total procesado por tipo de ganga
-SELECT g.mineral_name AS Tipo_Ganga, 
-       COUNT(mb.id_batch) AS Total_Lotes,
-       SUM(mb.batch_weight_tons) AS Toneladas_Totales,
-       AVG(mb.batch_weight_tons) AS Promedio_Por_Lote
-FROM mineral_batch mb
-INNER JOIN mineral_reception mr ON mb.id_reception = mr.id_reception
-INNER JOIN ganga g ON mr.id_ganga = g.id_ganga
-GROUP BY g.mineral_name
-ORDER BY Toneladas_Totales DESC;
 
--- Consulta 2: Reporte de telemetría de sensores por guardia de trabajo
-SELECT ws.shift_name AS Guardia, 
-       COUNT(pm.id_measurement) AS Total_Lecturas,
-       MAX(pm.recorded_value) AS Valor_Maximo_Registrado,
-       MIN(pm.recorded_value) AS Valor_Minimo_Registrado
-FROM process_measurement pm
-INNER JOIN metallurgical_process mp ON pm.id_process = mp.id_process
-INNER JOIN work_shift ws ON mp.id_shift = ws.id_shift
-GROUP BY ws.shift_name;
-
--- Consulta 3: Análisis de eficiencia de mallas de laboratorio por lote
-SELECT mb.batch_code AS Codigo_Lote, 
-       la.analysis_code AS Codigo_Analisis, 
-       sa.mesh_number AS Tipo_Malla, 
-       sa.percentage_passing AS Porcentaje_Pasante
-FROM mineral_batch mb
-INNER JOIN mineral_sample ms ON mb.id_batch = ms.id_batch
-INNER JOIN laboratory_analysis la ON ms.id_sample = la.id_sample
-INNER JOIN sieve_analysis sa ON la.id_analysis = sa.id_analysis
-WHERE sa.percentage_passing < 85.00
-ORDER BY mb.batch_code ASC;
+use MINEDATA
+GO
+-- 1. Cantidad de lotes por estado
+select entry_status as Status,
+       count(id_batch) as Total_Batches
+from mineral_batch
+group by entry_status
+order by Total_Batches desc
+go
 
 
--- INTEGRANTE 2: Subconsultas y Reportes Avanzados
+-- 2. Tonelaje total recibido por zona de origen
+select g.origin_zone as Zone,
+       count(mr.id_reception) as Total_Receptions,
+       sum(mr.total_weight_tons) as Total_Tons
+from ganga as g
+left join mineral_reception as mr on g.id_ganga = mr.id_ganga
+group by g.origin_zone
+order by Total_Tons desc
+go
 
--- Consulta 4: Lotes cuyo peso supera el promedio general de recepción
-SELECT batch_code, batch_weight_tons, entry_status
-FROM mineral_batch
-WHERE batch_weight_tons > (SELECT AVG(batch_weight_tons) FROM mineral_batch)
-ORDER BY batch_weight_tons DESC;
 
--- Consulta 5: Equipos de planta que registraron mediciones fuera de rango
-SELECT oe.equipment_code, oe.equipment_name, oe.status
-FROM operation_equipment oe
-WHERE oe.id_equipment IN (
-    SELECT DISTINCT mp.id_equipment 
-    FROM metallurgical_process mp
-    INNER JOIN process_measurement pm ON mp.id_process = pm.id_process
-    WHERE pm.is_out_range = 1
-);
-
--- Consulta 6: Operadores que han manejado procesos con mineral de alta pureza
-SELECT w.first_name, w.last_name, p.position_name
-FROM worker w
-INNER JOIN position p ON w.id_position = p.id_position
-WHERE w.id_worker IN (
-    SELECT mp.id_worker 
-    FROM metallurgical_process mp
-    INNER JOIN concentrate c ON mp.id_process = c.id_process
-    WHERE c.purity_percentage > 70.00
-);
-
--- Consulta 7: Función para calcular el descarte estimado de mineral
-DELIMITER $$
-CREATE FUNCTION fn_CalcularDescarte (id_lote INT)
-RETURNS DECIMAL(10,2)
-DETERMINISTIC
-BEGIN
-    DECLARE peso_total DECIMAL(10,2);
-    DECLARE peso_descarte DECIMAL(10,2);
-    
-    SELECT batch_weight_tons INTO peso_total FROM mineral_batch WHERE id_batch = id_lote;
-    SET peso_descarte = peso_total * 0.12;
-    RETURN peso_descarte;
-END$$
-DELIMITER ;
-
--- Consulta 8: Función para validar rangos críticos de sensores
-DELIMITER $$
-CREATE FUNCTION fn_VerificarAlertaSensor (valor DECIMAL(8,2), min_val DECIMAL(8,2), max_val DECIMAL(8,2))
-RETURNS VARCHAR(20)
-DETERMINISTIC
-BEGIN
-    IF valor < min_val OR valor > max_val THEN
-        RETURN 'CRÍTICO';
-    ELSE
-        RETURN 'NORMAL';
-    END IF;
-END$$
-DELIMITER ;
-
--- Consulta 9: Función para formatear nombres de operadores
-DELIMITER $$
-CREATE FUNCTION fn_FormatearNombreTrabajador (nombre VARCHAR(100), apellido VARCHAR(100))
-RETURNS VARCHAR(205)
-DETERMINISTIC
-BEGIN
-    RETURN CONCAT(UPPER(apellido), ', ', nombre);
-END$$
-DELIMITER ;
-
--- Consulta 10: Procedimiento para registrar un nuevo lote con auditoría interna
-DELIMITER $$
-CREATE PROCEDURE sp_RegistrarLoteMineral(
-    IN p_batch_code VARCHAR(50),
-    IN p_weight DECIMAL(10,2),
-    IN p_status VARCHAR(30),
-    IN p_reception INT
+-- 3. Lotes cuyo peso supera el promedio general
+select batch_code as Batch_Code,
+       batch_weight_tons as Weight_Tons,
+       entry_status as Status
+from mineral_batch
+where batch_weight_tons > (
+    select avg(batch_weight_tons) from mineral_batch
 )
-BEGIN
-    INSERT INTO mineral_batch (batch_code, batch_weight_tons, entry_status, id_reception)
-    VALUES (p_batch_code, p_weight, p_status, p_reception);
-    
-    INSERT INTO audit_log (affected_table, operation_type, old_value, new_value)
-    VALUES ('mineral_batch', 'INSERT', NULL, p_batch_code);
-END$$
-DELIMITER ;
+order by batch_weight_tons desc
+go
 
--- Consulta 11: Procedimiento para actualizar el estado del equipo de planta
-DELIMITER $$
-CREATE PROCEDURE sp_ActualizarEstadoEquipo(
-    IN p_equipment_code VARCHAR(50),
-    IN p_new_status VARCHAR(30)
+
+-- 4. Trabajadores y cantidad de procesos operados
+select w.first_name as First_Name,
+       w.last_name as Last_Name,
+       p.position_name as Position,
+       count(mp.id_process) as Total_Processes
+from worker as w
+inner join position as p on w.id_position = p.id_position
+left join metallurgical_process as mp on w.id_worker = mp.id_worker
+group by w.first_name, w.last_name, p.position_name
+order by Total_Processes desc
+go
+
+
+-- 5. Equipos que registraron mediciones fuera de rango
+select oe.equipment_code as Equip_Code,
+       oe.equipment_name as Equip_Name,
+       oe.status as Status
+from operation_equipment as oe
+where oe.id_equipment in (
+    select distinct mp.id_equipment
+    from metallurgical_process as mp
+    inner join process_measurement as pm on mp.id_process = pm.id_process
+    where pm.is_out_range = 1
 )
-BEGIN
-    UPDATE operation_equipment
-    SET status = p_new_status
-    WHERE equipment_code = p_equipment_code;
-END$$
-DELIMITER ;
+go
 
--- Consulta 12: Procedimiento para extraer promedios de telemetría de un proceso
-DELIMITER $$
-CREATE PROCEDURE sp_ObtenerMetricasProceso(
-    IN p_id_process INT,
-    OUT p_avg_value DECIMAL(8,2)
+
+-- 6. Analisis de laboratorio rechazados
+select la.analysis_code as Analysis_Code,
+       la.mineral_grade_porcentage as Grade_Pct,
+       la.analysis_date as Analysis_Date,
+       ms.sample_code as Sample_Code
+from laboratory_analysis as la
+inner join mineral_sample as ms on la.id_sample = ms.id_sample
+where la.status = 'rejected'
+order by la.analysis_date desc
+go
+
+
+-- 7. Concentrado producido por mes para un anio dado
+create view VConcentrateByMonth
+as
+select year(mp.start_date_time) as yr,
+       month(mp.start_date_time) as mth,
+       sum(c.weight_tons) as total_tons,
+       avg(c.purity_percentage) as avg_purity
+from metallurgical_process as mp
+inner join concentrate as c on mp.id_process = c.id_process
+group by year(mp.start_date_time), month(mp.start_date_time)
+go
+
+create function fn_ConcentrateByMonth(@yr int)
+returns table
+as
+return (
+    select mth as Month_Num,
+           total_tons as Total_Tons,
+           avg_purity as Avg_Purity_Pct
+    from VConcentrateByMonth
+    where yr = @yr
 )
-BEGIN
-    SELECT AVG(recorded_value) INTO p_avg_value
-    FROM process_measurement
-    WHERE id_process = p_id_process;
-END$$
-DELIMITER ;
+go
 
--- Consulta 13: Trigger para auditoría automática ante cambios de estado de lotes
-DELIMITER $$
-CREATE TRIGGER tr_AuditarCambioEstadoLote
-AFTER UPDATE ON mineral_batch
-FOR EACH ROW
-BEGIN
-    IF OLD.entry_status <> NEW.entry_status THEN
-        INSERT INTO audit_log (affected_table, operation_type, old_value, new_value)
-        VALUES ('mineral_batch', 'UPDATE_STATUS', OLD.entry_status, NEW.entry_status);
-    END IF;
-END$$
-DELIMITER ;
+select * from dbo.fn_ConcentrateByMonth(2025) order by Month_Num
+go
 
--- Consulta 14: Trigger preventivo para validar pesos lógicos de relaves
-DELIMITER $$
-CREATE TRIGGER tr_ValidarPesoTailings
-BEFORE INSERT ON tailings
-FOR EACH ROW
-BEGIN
-    IF NEW.weight_tons <= 0.00 THEN
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = 'Error de Consistencia: El peso del relave industrial debe ser estrictamente positivo.';
-    END IF;
-END$$
-DELIMITER ;
 
--- Consulta 15: Transacción para registrar proceso con cierre seguro de lote
-DELIMITER $$
-CREATE PROCEDURE sp_TxRegistrarYBloquearLote(
-    IN p_start DATETIME, IN p_end DATETIME, IN p_batch INT, IN p_worker INT, IN p_equip INT
+-- 8.Lote con mayor peso por zona de origen
+create view VBatchByZone
+as
+select g.origin_zone as zone,
+       mb.batch_code as batch_code,
+       mb.batch_weight_tons as weight_tons
+from mineral_batch as mb
+inner join mineral_reception as mr on mb.id_reception = mr.id_reception
+inner join ganga as g on mr.id_ganga = g.id_ganga
+go
+
+select zone as Zone,
+       batch_code as Batch_Code,
+       weight_tons as Weight_Tons
+from VBatchByZone
+where weight_tons = (
+    select max(weight_tons) from VBatchByZone
 )
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-    END;
+go
 
-    START TRANSACTION;
-        INSERT INTO metallurgical_process (start_date_time, end_date_time, id_batch, id_worker, id_equipment)
-        VALUES (p_start, p_end, p_batch, p_worker, p_equip);
-        
-        UPDATE mineral_batch 
-        SET entry_status = 'Procesado' 
-        WHERE id_batch = p_batch;
-    COMMIT;
-END$$
-DELIMITER ;
+
+-- 9. Lotes sin ninguna muestra registrada
+select mb.id_batch as Batch_Id,
+       mb.batch_code as Batch_Code,
+       mb.entry_status as Status
+from mineral_batch as mb
+where not exists (
+    select 1
+    from mineral_sample as ms
+    where ms.id_batch = mb.id_batch
+)
+go
+
+
+-- 10. Equipo con mayor cantidad de procesos ejecutados
+create view VProcessByEquip
+as
+select oe.equipment_code as equip_code,
+       oe.equipment_name as equip_name,
+       count(mp.id_process) as total_proc
+from operation_equipment as oe
+inner join metallurgical_process as mp on oe.id_equipment = mp.id_equipment
+group by oe.equipment_code, oe.equipment_name
+go
+
+select equip_code as Equip_Code,
+       equip_name as Equip_Name,
+       total_proc as Total_Processes
+from VProcessByEquip
+where total_proc = (
+    select max(total_proc) from VProcessByEquip
+)
+go
+
+
+-- 11. Funcion escalar: clasificar trabajador segun procesos operados
+create function fn_WorkerLevel(@id_worker int)
+returns varchar(20)
+as
+begin
+    declare @total int
+    declare @level varchar(20)
+
+    select @total = count(id_process)
+    from metallurgical_process
+    where id_worker = @id_worker
+
+    if (@total >= 10)
+    begin
+        set @level = 'Senior'
+    end
+    if (@total >= 4 and @total < 10)
+    begin
+        set @level = 'Regular'
+    end
+    if (@total < 4)
+    begin
+        set @level = 'Junior'
+    end
+
+    return @level
+end
+go
+
+
+select id_worker, first_name, last_name,
+        dbo.fn_WorkerLevel(id_worker) as Level
+from worker
+go
+
+
+
+-- 12. Procesos y toneladas de concentrado por anio
+create view VConcentrateByYear
+as
+select year(mp.start_date_time) as yr,
+       count(c.id_concentrate) as total_proc,
+       sum(c.weight_tons) as total_tons,
+       avg(c.purity_percentage) as avg_purity
+from metallurgical_process as mp
+inner join concentrate as c on mp.id_process = c.id_process
+group by year(mp.start_date_time)
+go
+
+create function fn_ConcentrateByYear(@yr int)
+returns table
+as
+return (
+    select yr as Year,
+           total_proc as Total_Processes,
+           total_tons as Total_Tons,
+           avg_purity as Avg_Purity_Pct
+    from VConcentrateByYear
+    where yr = @yr
+)
+go
+
+
+select * from dbo.fn_ConcentrateByYear(2024)
+go
+
+
+-- 13. Resumen de muestras y análisis por lote mineral
+select mb.id_batch as Batch_Id,
+       mb.batch_code as Batch_Code,
+       count(distinct ms.id_sample) as Total_Samples,
+       count(la.id_analysis) as Total_Analysis
+from mineral_batch as mb
+left join mineral_sample as ms on mb.id_batch = ms.id_batch
+left join laboratory_analysis as la on ms.id_sample = la.id_sample
+group by mb.id_batch, mb.batch_code
+order by Total_Analysis desc, Total_Samples desc
+go
+
+
+-- 14. Muestras sin analisis de laboratorio
+select ms.id_sample as Sample_Id,
+       ms.sample_code as Sample_Code,
+       mb.batch_code as Batch_Code
+from mineral_sample as ms
+inner join mineral_batch as mb on ms.id_batch = mb.id_batch
+where not exists (
+    select 1
+    from laboratory_analysis as la
+    where la.id_sample = ms.id_sample
+)
+order by ms.id_sample
+go
+
+
+-- 15. Procedure para cambiar el estado de un equipo de maintenance a active
+create procedure sp_ActivateEquipment
+    @id_equipment int
+as
+begin
+    if not exists (
+        select 1
+        from operation_equipment
+        where id_equipment = @id_equipment
+    )
+    begin
+        print 'The equipament not exist'
+        return
+    end
+
+    if exists (
+        select 1
+        from operation_equipment
+        where id_equipment = @id_equipment
+          and status = 'active'
+    )
+    begin
+        print 'The device has already been switched to active'
+        return
+    end
+
+    if exists (
+        select 1
+        from operation_equipment
+        where id_equipment = @id_equipment
+          and status = 'maintenance'
+    )
+    begin
+        update operation_equipment
+        set status = 'active'
+        where id_equipment = @id_equipment
+
+        print 'Device successfully updated to active.'
+        return
+    end
+
+    if exists (
+        select 1
+        from operation_equipment
+        where id_equipment = @id_equipment
+    )
+    begin
+        print 'The equipment is not undergoing maintenance.'
+        return
+    end
+end
+go
+
+
