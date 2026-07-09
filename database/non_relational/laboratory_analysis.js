@@ -1,45 +1,100 @@
-
-
-use("MINEDATA_SOLUTION"); 
-
 db.createCollection("laboratory_analysis", {
-    "capped": false,
-    "validator": {
-        "$jsonSchema": {
-            "bsonType": "object",
-            "title": "laboratory_analysis",
-            "properties": {
-                "_id": {
-                    "bsonType": "objectId"
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            title: "laboratory_analysis",
+
+            properties: {
+                _id: {
+                    bsonType: "objectId"
                 },
-                "analysis_code": {
-                    "bsonType": "string"
+
+                analysis_code: {
+                    bsonType: "string"
                 },
-                "analysis_date": {
-                    "bsonType": "date"
+
+                mineral_grade_percentage: {
+                    bsonType: "decimal"
                 },
-                "batch_code": {
-                    "bsonType": "string"
+
+                analysis_date: {
+                    bsonType: "date"
                 },
-                "sieve_analysis": {
-                    "bsonType": "array",
-                    "additionalItems": true,
-                    "items": [
-                        {
-                            "bsonType": "string"
+
+                status: {
+                    bsonType: "string"
+                },
+
+                id_batch: {
+                    bsonType: "objectId"
+                },
+
+                mineral_sample: {
+                    bsonType: "object",
+
+                    properties: {
+                        sample_code: {
+                            bsonType: "string"
                         },
-                        {
-                            "bsonType": "double"
-                        },
-                        {
-                            "bsonType": "string"
+
+                        extraction_date: {
+                            bsonType: "date"
                         }
+                    },
+
+                    additionalProperties: false,
+
+                    required: [
+                        "sample_code",
+                        "extraction_date"
                     ]
+                },
+
+                sieve_analysis: {
+                    bsonType: "array",
+
+                    items: {
+                        bsonType: "object",
+
+                        properties: {
+                            mesh_number: {
+                                bsonType: "string"
+                            },
+
+                            weight_retained: {
+                                bsonType: "decimal"
+                            },
+
+                            percentage_passing: {
+                                bsonType: "decimal"
+                            }
+                        },
+
+                        additionalProperties: false,
+
+                        required: [
+                            "mesh_number",
+                            "weight_retained",
+                            "percentage_passing"
+                        ]
+                    }
                 }
             },
-            "additionalProperties": false
+
+            additionalProperties: false,
+
+            required: [
+                "analysis_code",
+                "mineral_grade_percentage",
+                "analysis_date",
+                "status",
+                "id_batch",
+                "mineral_sample",
+                "sieve_analysis"
+            ]
         }
     },
-    "validationLevel": "off",
-    "validationAction": "warn"
+
+    validationLevel: "strict",
+    validationAction: "error"
 });
