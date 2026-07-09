@@ -1,357 +1,761 @@
+/*
+============================================================
+Insesción de datos NOSQL - MONGO DB
+============================================================
+*/
 
-// =========================================================================
-// 1. INSERCIÓN DE DATOS EN LA COLECCIÓN: mineral_batch
-// Combinación de: mineral_batch + mineral_reception + ganga
-// =========================================================================
+
+use("minedata_nosql"); 
+// ============================================================
+// 1. MINERAL_BATCH
+// ============================================================
 db.mineral_batch.insertMany([
-  {
-    "batch_code": "LOTE-2021-001",
-    "batch_weight_tons": 1750.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "1", "description": "Ganga de cuarzo y silice zona norte" },
-    "mineral_reception": { "id_reception": 1, "reception_date": "2021-03-10 08:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2021-002",
-    "batch_weight_tons": 1750.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "1", "description": "Ganga de cuarzo y silice zona norte" },
-    "mineral_reception": { "id_reception": 1, "reception_date": "2021-03-10 08:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2021-003",
-    "batch_weight_tons": 2800.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "2", "description": "Material esteril con presencia de oxidos" },
-    "mineral_reception": { "id_reception": 2, "reception_date": "2021-08-22 07:30:00" }
-  },
-  {
-    "batch_code": "LOTE-2022-001",
-    "batch_weight_tons": 2100.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "3", "description": "Ganga arcillosa con bajo contenido cuprico" },
-    "mineral_reception": { "id_reception": 3, "reception_date": "2022-01-15 08:15:00" }
-  },
-  {
-    "batch_code": "LOTE-2022-002",
-    "batch_weight_tons": 2100.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "3", "description": "Ganga arcillosa con bajo contenido cuprico" },
-    "mineral_reception": { "id_reception": 3, "reception_date": "2022-01-15 08:15:00" }
-  },
-  {
-    "batch_code": "LOTE-2022-003",
-    "batch_weight_tons": 3100.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "4", "description": "Material esteril trituracion secundaria" },
-    "mineral_reception": { "id_reception": 4, "reception_date": "2022-06-30 06:45:00" }
-  },
-  {
-    "batch_code": "LOTE-2022-004",
-    "batch_weight_tons": 2500.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "5", "description": "Ganga de caliza zona central" },
-    "mineral_reception": { "id_reception": 5, "reception_date": "2022-11-05 08:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2022-005",
-    "batch_weight_tons": 2500.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "5", "description": "Ganga de caliza zona central" },
-    "mineral_reception": { "id_reception": 5, "reception_date": "2022-11-05 08:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2023-001",
-    "batch_weight_tons": 1900.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "6", "description": "Esteril con presencia de pirita" },
-    "mineral_reception": { "id_reception": 6, "reception_date": "2023-02-18 07:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2023-002",
-    "batch_weight_tons": 1900.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "6", "description": "Esteril con presencia de pirita" },
-    "mineral_reception": { "id_reception": 6, "reception_date": "2023-02-18 07:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2023-003",
-    "batch_weight_tons": 2950.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "7", "description": "Ganga siliceo-arcillosa" },
-    "mineral_reception": { "id_reception": 7, "reception_date": "2023-07-14 08:30:00" }
-  },
-  {
-    "batch_code": "LOTE-2023-004",
-    "batch_weight_tons": 2300.00,
-    "entry_status": "Processed",
-    "ganga": { "id_ganga": "8", "description": "Material esteril zona norte temporada seca" },
-    "mineral_reception": { "id_reception": 8, "reception_date": "2023-12-01 07:15:00" }
-  },
-  {
-    "batch_code": "LOTE-2023-005",
-    "batch_weight_tons": 2300.00,
-    "entry_status": "In Processed",
-    "ganga": { "id_ganga": "8", "description": "Material esteril zona norte temporada seca" },
-    "mineral_reception": { "id_reception": 8, "reception_date": "2023-12-01 07:15:00" }
-  },
-  {
-    "batch_code": "LOTE-2024-001",
-    "batch_weight_tons": 3300.00,
-    "entry_status": "In Processed",
-    "ganga": { "id_ganga": "9", "description": "Ganga con oxidos de hierro" },
-    "mineral_reception": { "id_reception": 9, "reception_date": "2024-03-25 08:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2024-002",
-    "batch_weight_tons": 2700.00,
-    "entry_status": "Pending",
-    "ganga": { "id_ganga": "10", "description": "Esteril de baja ley zona este" },
-    "mineral_reception": { "id_reception": 10, "reception_date": "2024-08-09 06:30:00" }
-  },
-  // Historial Extendido (2024 Semestre II - 2026)
-  {
-    "batch_code": "LOTE-2024-003",
-    "batch_weight_tons": 1925.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "11", "description": "Ganga cuarzosa con trazas de pirita zona norte" },
-    "mineral_reception": { "id_reception": 11, "reception_date": "2024-10-12 07:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2024-004",
-    "batch_weight_tons": 1925.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "11", "description": "Ganga cuarzosa con trazas de pirita zona norte" },
-    "mineral_reception": { "id_reception": 11, "reception_date": "2024-10-12 07:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2025-001",
-    "batch_weight_tons": 2350.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "12", "description": "Material esteril campaña verano zona sur" },
-    "mineral_reception": { "id_reception": 12, "reception_date": "2025-02-03 08:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2025-002",
-    "batch_weight_tons": 2350.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "12", "description": "Material esteril campaña verano zona sur" },
-    "mineral_reception": { "id_reception": 12, "reception_date": "2025-02-03 08:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2025-003",
-    "batch_weight_tons": 3600.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "13", "description": "Ganga arcillo-arenosa zona este campaña seca" },
-    "mineral_reception": { "id_reception": 13, "reception_date": "2025-05-19 07:30:00" }
-  },
-  {
-    "batch_code": "LOTE-2025-004",
-    "batch_weight_tons": 2050.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "14", "description": "Esteril con oxidos de manganeso zona central" },
-    "mineral_reception": { "id_reception": 14, "reception_date": "2025-08-27 08:15:00" }
-  },
-  {
-    "batch_code": "LOTE-2025-005",
-    "batch_weight_tons": 2050.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "14", "description": "Esteril con oxidos de manganeso zona central" },
-    "mineral_reception": { "id_reception": 14, "reception_date": "2025-08-27 08:15:00" }
-  },
-  {
-    "batch_code": "LOTE-2025-006",
-    "batch_weight_tons": 2600.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "15", "description": "Ganga de caliza con silice zona norte" },
-    "mineral_reception": { "id_reception": 15, "reception_date": "2025-11-10 07:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2025-007",
-    "batch_weight_tons": 2600.00,
-    "entry_status": "in_process",
-    "ganga": { "id_ganga": "15", "description": "Ganga de caliza con silice zona norte" },
-    "mineral_reception": { "id_reception": 15, "reception_date": "2025-11-10 07:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2026-001",
-    "batch_weight_tons": 3950.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "16", "description": "Material esteril inicio campaña 2026 zona sur" },
-    "mineral_reception": { "id_reception": 16, "reception_date": "2026-01-20 08:00:00" }
-  },
-  {
-    "batch_code": "LOTE-2026-002",
-    "batch_weight_tons": 2150.00,
-    "entry_status": "processed",
-    "ganga": { "id_ganga": "17", "description": "Ganga siliceo-ferruginosa zona este" },
-    "mineral_reception": { "id_reception": 17, "reception_date": "2026-04-08 07:45:00" }
-  },
-  {
-    "batch_code": "LOTE-2026-003",
-    "batch_weight_tons": 2150.00,
-    "entry_status": "in_process",
-    "ganga": { "id_ganga": "17", "description": "Ganga siliceo-ferruginosa zona este" },
-    "mineral_reception": { "id_reception": 17, "reception_date": "2026-04-08 07:45:00" }
-  },
-  {
-    "batch_code": "LOTE-2026-004",
-    "batch_weight_tons": 3750.00,
-    "entry_status": "pending",
-    "ganga": { "id_ganga": "18", "description": "Esteril con presencia de arcillas zona central" },
-    "mineral_reception": { "id_reception": 18, "reception_date": "2026-06-15 07:00:00" }
-  }
+    {
+        batch_code: "LOTE-2021-001",
+        batch_weight_tons: NumberDecimal("1750.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2021-03-10T08:00:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Norte TJ-01, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2021-03-10T00:00:00Z"),
+                description: "Ganga de cuarzo y silice zona norte",
+                origin_zone: "Zona Norte TJ-01",
+                "total-wigth_tons": NumberDecimal("1250.5")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2021-002",
+        batch_weight_tons: NumberDecimal("1750.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2021-03-10T08:00:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Norte TJ-01, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2021-03-10T00:00:00Z"),
+                description: "Ganga de cuarzo y silice zona norte",
+                origin_zone: "Zona Norte TJ-01",
+                "total-wigth_tons": NumberDecimal("1250.5")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2021-003",
+        batch_weight_tons: NumberDecimal("2800.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2021-08-22T07:30:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Este TJ-02, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2021-08-22T00:00:00Z"),
+                description: "Material esteril con presencia de oxidos",
+                origin_zone: "Zona Este TJ-02",
+                "total-wigth_tons": NumberDecimal("980.0")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2022-001",
+        batch_weight_tons: NumberDecimal("2100.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2022-01-15T08:15:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Sur TJ-03, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2022-01-15T00:00:00Z"),
+                description: "Ganga arcillosa con bajo contenido cuprico",
+                origin_zone: "Zona Sur TJ-03",
+                "total-wigth_tons": NumberDecimal("1540.75")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2022-002",
+        batch_weight_tons: NumberDecimal("2100.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2022-01-15T08:15:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Sur TJ-03, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2022-01-15T00:00:00Z"),
+                description: "Ganga arcillosa con bajo contenido cuprico",
+                origin_zone: "Zona Sur TJ-03",
+                "total-wigth_tons": NumberDecimal("1540.75")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2022-003",
+        batch_weight_tons: NumberDecimal("3100.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2022-06-30T06:45:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Norte TJ-01, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2022-06-30T00:00:00Z"),
+                description: "Material esteril trituracion secundaria",
+                origin_zone: "Zona Norte TJ-01",
+                "total-wigth_tons": NumberDecimal("870.25")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2022-004",
+        batch_weight_tons: NumberDecimal("2500.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2022-11-05T08:00:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Central TJ-04, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2022-11-05T00:00:00Z"),
+                description: "Ganga de caliza zona central",
+                origin_zone: "Zona Central TJ-04",
+                "total-wigth_tons": NumberDecimal("2100.0")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2022-005",
+        batch_weight_tons: NumberDecimal("2500.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2022-11-05T08:00:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Central TJ-04, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2022-11-05T00:00:00Z"),
+                description: "Ganga de caliza zona central",
+                origin_zone: "Zona Central TJ-04",
+                "total-wigth_tons": NumberDecimal("2100.0")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2023-001",
+        batch_weight_tons: NumberDecimal("1900.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2023-02-18T07:00:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Este TJ-02, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2023-02-18T00:00:00Z"),
+                description: "Esteril con presencia de pirita",
+                origin_zone: "Zona Este TJ-02",
+                "total-wigth_tons": NumberDecimal("1320.6")
+            }
+        }
+    },
+
+    {
+        batch_code: "LOTE-2023-002",
+        batch_weight_tons: NumberDecimal("1900.0"),
+        entry_status: "Processed",
+
+        mineral_reception: {
+            reception_date: ISODate("2023-02-18T07:00:00Z"),
+            description: "Recepcion de mineral bruto proveniente de Zona Este TJ-02, con control de peso y verificacion visual antes del ingreso a planta concentradora",
+
+            ganga: {
+                entry_date: ISODate("2023-02-18T00:00:00Z"),
+                description: "Esteril con presencia de pirita",
+                origin_zone: "Zona Este TJ-02",
+                "total-wigth_tons": NumberDecimal("1320.6")
+            }
+        }
+    }
 ]);
 
-// =========================================================================
-// 2. INSERCIÓN DE DATOS EN LA COLECCIÓN: metallurgical_process
-// Une: metallurgical_process + worker + operation_equipment + process_measurement + process_parameter
-// Respeta estrictamente el arreglo posicional de mediciones [int, double, date, binData/null]
-// =========================================================================
+
+// ============================================================
+// 2. METALLURGICAL_PROCESS
+// ============================================================
 db.metallurgical_process.insertMany([
-  // LOTE-2021-001 (id_batch: 1)
-  {
-    "start_date_time": ISODate("2021-03-11T07:00:00Z"),
-    "end_date_time": ISODate("2021-03-11T11:30:00Z"),
-    "id_batch": 1,
-    "worker": { "id_worker": 1, "first_name": "Carlos", "last_name": "Mamani Quispe" },
-    "operation_equipament": { "id_equipment": 1, "equipment_code": "EQ-001", "equipment_name": "Chancadora de Mandibula C110" },
-    "process_measurement": [0, 18.50, ISODate("2021-03-11T09:00:00Z"), null],
-    "process_parameter": { "parameter_name": "Tamano de Particula D80", "unit_of_measure": "mm" }
-  },
-  {
-    "start_date_time": ISODate("2021-03-12T07:00:00Z"),
-    "end_date_time": ISODate("2021-03-12T15:00:00Z"),
-    "id_batch": 1,
-    "worker": { "id_worker": 8, "first_name": "Elena", "last_name": "Tapara Churata" },
-    "operation_equipament": { "id_equipment": 5, "equipment_code": "EQ-005", "equipment_name": "Celda de Flotacion IF-300" },
-    "process_measurement": [0, 9.80, ISODate("2021-03-12T08:30:00Z"), null],
-    "process_parameter": { "parameter_name": "pH de Pulpa", "unit_of_measure": "pH" }
-  },
-  // LOTE-2022-001 (id_batch: 4)
-  {
-    "start_date_time": ISODate("2022-01-17T07:00:00Z"),
-    "end_date_time": ISODate("2022-01-17T17:00:00Z"),
-    "id_batch": 4,
-    "worker": { "id_worker": 1, "first_name": "Carlos", "last_name": "Mamani Quispe" },
-    "operation_equipament": { "id_equipment": 5, "equipment_code": "EQ-005", "equipment_name": "Celda de Flotacion IF-300" },
-    "process_measurement": [1, 11.80, ISODate("2022-01-17T09:00:00Z"), null], // Fuera de rango (is_out_range: 1)
-    "process_parameter": { "parameter_name": "pH de Pulpa", "unit_of_measure": "pH" }
-  },
-  // LOTE-2023-001 (id_batch: 9)
-  {
-    "start_date_time": ISODate("2023-02-20T07:00:00Z"),
-    "end_date_time": ISODate("2023-02-20T17:30:00Z"),
-    "id_batch": 9,
-    "worker": { "id_worker": 1, "first_name": "Carlos", "last_name": "Mamani Quispe" },
-    "operation_equipament": { "id_equipment": 5, "equipment_code": "EQ-005", "equipment_name": "Celda de Flotacion IF-300" },
-    "process_measurement": [0, 10.20, ISODate("2023-02-20T09:00:00Z"), null],
-    "process_parameter": { "parameter_name": "pH de Pulpa", "unit_of_measure": "pH" }
-  },
-  // LOTE-2023-004 (id_batch: 12)
-  {
-    "start_date_time": ISODate("2023-12-03T07:00:00Z"),
-    "end_date_time": ISODate("2023-12-03T17:00:00Z"),
-    "id_batch": 12,
-    "worker": { "id_worker": 1, "first_name": "Carlos", "last_name": "Mamani Quispe" },
-    "operation_equipament": { "id_equipment": 5, "equipment_code": "EQ-005", "equipment_name": "Celda de Flotacion IF-300" },
-    "process_measurement": [0, 9.50, ISODate("2023-12-03T09:00:00Z"), null],
-    "process_parameter": { "parameter_name": "pH de Pulpa", "unit_of_measure": "pH" }
-  },
-  // LOTE-2024-001 (id_batch: 14)
-  {
-    "start_date_time": ISODate("2024-03-27T07:00:00Z"),
-    "end_date_time": ISODate("2024-03-27T18:00:00Z"),
-    "id_batch": 14,
-    "worker": { "id_worker": 6, "first_name": "Ana", "last_name": "Coaquira Lima" },
-    "operation_equipament": { "id_equipment": 5, "equipment_code": "EQ-005", "equipment_name": "Celda de Flotacion IF-300" },
-    "process_measurement": [1, 13.50, ISODate("2024-03-27T09:00:00Z"), null], // Dosis Espumante fuera de rango
-    "process_parameter": { "parameter_name": "Dosis Espumante (MIBC)", "unit_of_measure": "g/t" }
-  },
-  // LOTE-2024-003 (id_batch: 16)
-  {
-    "start_date_time": ISODate("2024-10-14T07:00:00Z"),
-    "end_date_time": ISODate("2024-10-14T17:30:00Z"),
-    "id_batch": 16,
-    "worker": { "id_worker": 6, "first_name": "Ana", "last_name": "Coaquira Lima" },
-    "operation_equipament": { "id_equipment": 5, "equipment_code": "EQ-005", "equipment_name": "Celda de Flotacion IF-300" },
-    "process_measurement": [0, 10.10, ISODate("2024-10-14T09:00:00Z"), null],
-    "process_parameter": { "parameter_name": "pH de Pulpa", "unit_of_measure": "pH" }
-  },
-  // LOTE-2025-002 (id_batch: 19)
-  {
-    "start_date_time": ISODate("2025-03-11T07:00:00Z"),
-    "end_date_time": ISODate("2025-03-11T17:30:00Z"),
-    "id_batch": 19,
-    "worker": { "id_worker": 1, "first_name": "Carlos", "last_name": "Mamani Quispe" },
-    "operation_equipament": { "id_equipment": 5, "equipment_code": "EQ-005", "equipment_name": "Celda de Flotacion IF-300" },
-    "process_measurement": [1, 1.48, ISODate("2025-03-11T09:30:00Z"), null], // Densidad fuera de rango
-    "process_parameter": { "parameter_name": "Densidad de Pulpa Flotacion", "unit_of_measure": "g/cm3" }
-  },
-  // LOTE-2026-002 (id_batch: 26)
-  {
-    "start_date_time": ISODate("2026-04-10T07:00:00Z"),
-    "end_date_time": ISODate("2026-04-10T17:30:00Z"),
-    "id_batch": 26,
-    "worker": { "id_worker": 6, "first_name": "Ana", "last_name": "Coaquira Lima" },
-    "operation_equipament": { "id_equipment": 5, "equipment_code": "EQ-005", "equipment_name": "Celda de Flotacion IF-300" },
-    "process_measurement": [1, 11.60, ISODate("2026-04-10T09:00:00Z"), null], // pH fuera de rango
-    "process_parameter": { "parameter_name": "pH de Pulpa", "unit_of_measure": "pH" }
-  }
+    {
+        start_date_time: ISODate("2021-03-11T07:00:00Z"),
+        end_date_time: ISODate("2021-03-11T11:30:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Carlos",
+            last_name: "Mamani Quispe",
+            email: "c.mamani@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-001",
+            equipment_name: "Chancadora de Mandibula C110",
+            status: "active"
+        }
+    },
+
+    {
+        start_date_time: ISODate("2021-03-11T12:00:00Z"),
+        end_date_time: ISODate("2021-03-11T18:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Carlos",
+            last_name: "Mamani Quispe",
+            email: "c.mamani@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-003",
+            equipment_name: "Molino de Bolas 14x18",
+            status: "active"
+        }
+    },
+
+    {
+        start_date_time: ISODate("2021-03-12T07:00:00Z"),
+        end_date_time: ISODate("2021-03-12T15:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Elena",
+            last_name: "Tapara Churata",
+            email: "e.tapara@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-005",
+            equipment_name: "Celda de Flotacion IF-300",
+            status: "active"
+        },
+
+        concentrate: {
+            purity_percentage: NumberDecimal("28.5"),
+            weight_tons: NumberDecimal("420.5")
+        },
+
+        tailings: {
+            toxicity_level: "low",
+            weight_tons: NumberDecimal("1280.5")
+        }
+    },
+
+    {
+        start_date_time: ISODate("2021-04-05T07:00:00Z"),
+        end_date_time: ISODate("2021-04-05T11:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Elena",
+            last_name: "Tapara Churata",
+            email: "e.tapara@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-001",
+            equipment_name: "Chancadora de Mandibula C110",
+            status: "active"
+        }
+    },
+
+    {
+        start_date_time: ISODate("2021-04-05T12:00:00Z"),
+        end_date_time: ISODate("2021-04-05T19:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Carlos",
+            last_name: "Mamani Quispe",
+            email: "c.mamani@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-003",
+            equipment_name: "Molino de Bolas 14x18",
+            status: "active"
+        }
+    },
+
+    {
+        start_date_time: ISODate("2021-04-06T07:00:00Z"),
+        end_date_time: ISODate("2021-04-06T16:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Elena",
+            last_name: "Tapara Churata",
+            email: "e.tapara@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-005",
+            equipment_name: "Celda de Flotacion IF-300",
+            status: "active"
+        },
+
+        concentrate: {
+            purity_percentage: NumberDecimal("29.1"),
+            weight_tons: NumberDecimal("410.2")
+        },
+
+        tailings: {
+            toxicity_level: "low",
+            weight_tons: NumberDecimal("1290.8")
+        }
+    },
+
+    {
+        start_date_time: ISODate("2022-01-16T07:00:00Z"),
+        end_date_time: ISODate("2022-01-16T12:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Carlos",
+            last_name: "Mamani Quispe",
+            email: "c.mamani@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-001",
+            equipment_name: "Chancadora de Mandibula C110",
+            status: "active"
+        }
+    },
+
+    {
+        start_date_time: ISODate("2022-01-16T13:00:00Z"),
+        end_date_time: ISODate("2022-01-16T19:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Elena",
+            last_name: "Tapara Churata",
+            email: "e.tapara@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-003",
+            equipment_name: "Molino de Bolas 14x18",
+            status: "active"
+        }
+    },
+
+    {
+        start_date_time: ISODate("2022-01-17T07:00:00Z"),
+        end_date_time: ISODate("2022-01-17T17:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Carlos",
+            last_name: "Mamani Quispe",
+            email: "c.mamani@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Dia",
+            start_time: ISODate("1970-01-01T07:00:00Z"),
+            end_time: ISODate("1970-01-01T19:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-005",
+            equipment_name: "Celda de Flotacion IF-300",
+            status: "active"
+        },
+
+        concentrate: {
+            purity_percentage: NumberDecimal("31.2"),
+            weight_tons: NumberDecimal("530.8")
+        },
+
+        tailings: {
+            toxicity_level: "medium",
+            weight_tons: NumberDecimal("1520.2")
+        }
+    },
+
+    {
+        start_date_time: ISODate("2022-11-06T19:00:00Z"),
+        end_date_time: ISODate("2022-11-07T01:00:00Z"),
+
+        id_batch: ObjectId(),
+
+        worker: {
+            first_name: "Elena",
+            last_name: "Tapara Churata",
+            email: "e.tapara@minedata.pe",
+
+            position: {
+                position_name: "Operador de Planta"
+            }
+        },
+
+        work_shift: {
+            shift_name: "Turno Noche",
+            start_time: ISODate("1970-01-01T19:00:00Z"),
+            end_time: ISODate("1970-01-01T07:00:00Z")
+        },
+
+        operation_equipment: {
+            equipment_code: "EQ-002",
+            equipment_name: "Chancadora Conica HP300",
+            status: "active"
+        }
+    }
 ]);
 
-// =========================================================================
-// 3. INSERCIÓN DE DATOS EN LA COLECCIÓN: laboratory_analysis
-// Une: laboratory_analysis + sieve_analysis + hereda lote desde mineral_sample
-// Mapea el arreglo posicional sieve_analysis: [string(malla), double(peso), string(porcentaje)]
-// =========================================================================
+
+// ============================================================
+// 3. LABORATORY_ANALYSIS
+// ============================================================
 db.laboratory_analysis.insertMany([
-  {
-    "analysis_code": "ANA-2021-001",
-    "analysis_date": ISODate("2021-03-13T09:00:00Z"),
-    "batch_code": "LOTE-2021-001",
-    "sieve_analysis": ["#10", 12.50, "98.20"] // El porcentaje pasa como string según tu esquema
-  },
-  {
-    "analysis_code": "ANA-2022-001",
-    "analysis_date": ISODate("2022-01-18T09:00:00Z"),
-    "batch_code": "LOTE-2022-001",
-    "sieve_analysis": ["#10", 11.90, "97.80"]
-  },
-  {
-    "analysis_code": "ANA-2023-004",
-    "analysis_date": ISODate("2023-12-04T09:00:00Z"),
-    "batch_code": "LOTE-2023-004",
-    "sieve_analysis": ["#10", 13.20, "97.50"]
-  },
-  {
-    "analysis_code": "ANA-2024-003",
-    "analysis_date": ISODate("2024-10-15T09:00:00Z"),
-    "batch_code": "LOTE-2024-003",
-    "sieve_analysis": ["#10", 11.20, "98.30"]
-  },
-  {
-    "analysis_code": "ANA-2025-001",
-    "analysis_date": ISODate("2025-02-06T09:00:00Z"),
-    "batch_code": "LOTE-2025-001",
-    "sieve_analysis": ["#10", 12.10, "97.90"]
-  },
-  {
-    "analysis_code": "ANA-2025-004",
-    "analysis_date": ISODate("2025-05-22T09:00:00Z"),
-    "batch_code": "LOTE-2025-003",
-    "sieve_analysis": ["#10", 10.50, "98.60"]
-  },
-  {
-    "analysis_code": "ANA-2025-007",
-    "analysis_date": ISODate("2025-11-13T09:00:00Z"),
-    "batch_code": "LOTE-2025-006",
-    "sieve_analysis": ["#10", 11.80, "96.30"]
-  },
-  {
-    "analysis_code": "ANA-2026-001",
-    "analysis_date": ISODate("2026-01-23T09:00:00Z"),
-    "batch_code": "LOTE-2026-001",
-    "sieve_analysis": ["#10", 10.90, "98.40"]
-  }
+    {
+        analysis_code: "ANA-2021-001",
+        mineral_grade_porcentage: NumberDecimal("28.5"),
+        analysis_date: ISODate("2021-03-13T09:00:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2021-001",
+            extraction_date: ISODate("2021-03-12T10:00:00Z")
+        },
+
+        sieve_analysis: [
+            {
+                mesh_number: "#10",
+                weight_retained: NumberDecimal("12.5"),
+                percentage_passing: NumberDecimal("98.2")
+            },
+            {
+                mesh_number: "#35",
+                weight_retained: NumberDecimal("45.8"),
+                percentage_passing: NumberDecimal("86.5")
+            },
+            {
+                mesh_number: "#100",
+                weight_retained: NumberDecimal("98.3"),
+                percentage_passing: NumberDecimal("62.4")
+            },
+            {
+                mesh_number: "#200",
+                weight_retained: NumberDecimal("124.1"),
+                percentage_passing: NumberDecimal("12.8")
+            }
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2021-002",
+        mineral_grade_porcentage: NumberDecimal("27.8"),
+        analysis_date: ISODate("2021-03-13T11:00:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2021-002",
+            extraction_date: ISODate("2021-03-12T14:00:00Z")
+        },
+
+        sieve_analysis: [
+
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2021-003",
+        mineral_grade_porcentage: NumberDecimal("29.1"),
+        analysis_date: ISODate("2021-04-07T09:00:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2021-003",
+            extraction_date: ISODate("2021-04-06T10:00:00Z")
+        },
+
+        sieve_analysis: [
+
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2022-001",
+        mineral_grade_porcentage: NumberDecimal("31.2"),
+        analysis_date: ISODate("2022-01-18T09:00:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2022-001",
+            extraction_date: ISODate("2022-01-17T10:00:00Z")
+        },
+
+        sieve_analysis: [
+            {
+                mesh_number: "#10",
+                weight_retained: NumberDecimal("11.9"),
+                percentage_passing: NumberDecimal("97.8")
+            },
+            {
+                mesh_number: "#35",
+                weight_retained: NumberDecimal("44.2"),
+                percentage_passing: NumberDecimal("85.9")
+            },
+            {
+                mesh_number: "#100",
+                weight_retained: NumberDecimal("96.5"),
+                percentage_passing: NumberDecimal("61.2")
+            },
+            {
+                mesh_number: "#200",
+                weight_retained: NumberDecimal("122.3"),
+                percentage_passing: NumberDecimal("13.5")
+            }
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2022-002",
+        mineral_grade_porcentage: NumberDecimal("29.7"),
+        analysis_date: ISODate("2022-01-18T11:30:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2022-002",
+            extraction_date: ISODate("2022-01-17T14:00:00Z")
+        },
+
+        sieve_analysis: [
+
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2022-003",
+        mineral_grade_porcentage: NumberDecimal("24.5"),
+        analysis_date: ISODate("2022-11-08T09:00:00Z"),
+        status: "rejected",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2022-003",
+            extraction_date: ISODate("2022-11-07T11:00:00Z")
+        },
+
+        sieve_analysis: [
+
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2023-001",
+        mineral_grade_porcentage: NumberDecimal("33.8"),
+        analysis_date: ISODate("2023-02-21T09:00:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2023-001",
+            extraction_date: ISODate("2023-02-20T10:00:00Z")
+        },
+
+        sieve_analysis: [
+            {
+                mesh_number: "#10",
+                weight_retained: NumberDecimal("10.8"),
+                percentage_passing: NumberDecimal("98.5")
+            },
+            {
+                mesh_number: "#35",
+                weight_retained: NumberDecimal("43.1"),
+                percentage_passing: NumberDecimal("87.2")
+            },
+            {
+                mesh_number: "#100",
+                weight_retained: NumberDecimal("95.2"),
+                percentage_passing: NumberDecimal("63.1")
+            },
+            {
+                mesh_number: "#200",
+                weight_retained: NumberDecimal("119.8"),
+                percentage_passing: NumberDecimal("11.9")
+            }
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2023-002",
+        mineral_grade_porcentage: NumberDecimal("34.1"),
+        analysis_date: ISODate("2023-02-21T11:00:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2023-002",
+            extraction_date: ISODate("2023-02-20T14:00:00Z")
+        },
+
+        sieve_analysis: [
+
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2023-003",
+        mineral_grade_porcentage: NumberDecimal("30.6"),
+        analysis_date: ISODate("2023-07-17T09:00:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2023-003",
+            extraction_date: ISODate("2023-07-16T11:00:00Z")
+        },
+
+        sieve_analysis: [
+
+        ]
+    },
+
+    {
+        analysis_code: "ANA-2023-004",
+        mineral_grade_porcentage: NumberDecimal("32.4"),
+        analysis_date: ISODate("2023-12-04T09:00:00Z"),
+        status: "approved",
+
+        id_batch: ObjectId(),
+
+        mineral_sample: {
+            sample_code: "MUS-2023-004",
+            extraction_date: ISODate("2023-12-03T10:00:00Z")
+        },
+
+        sieve_analysis: [
+
+        ]
+    }
 ]);
