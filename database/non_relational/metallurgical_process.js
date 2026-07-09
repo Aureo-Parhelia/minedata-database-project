@@ -1,88 +1,170 @@
-use("MINEDATA_SOLUTION"); 
-
 db.createCollection("metallurgical_process", {
-    "capped": false,
-    "validator": {
-        "$jsonSchema": {
-            "bsonType": "object",
-            "title": "metallurgical_process",
-            "properties": {
-                "_id": {
-                    "bsonType": "objectId"
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            title: "metallurgical_process",
+
+            properties: {
+                _id: {
+                    bsonType: "objectId"
                 },
-                "start_date_time": {
-                    "bsonType": "date"
+
+                start_date_time: {
+                    bsonType: "date"
                 },
-                "end_date_time": {
-                    "bsonType": "date"
+
+                end_date_time: {
+                    bsonType: "date"
                 },
-                "worker": {
-                    "bsonType": "object",
-                    "properties": {
-                        "id_worker": {
-                            "bsonType": "int"
+
+                id_batch: {
+                    bsonType: "objectId"
+                },
+
+                worker: {
+                    bsonType: "object",
+
+                    properties: {
+                        first_name: {
+                            bsonType: "string"
                         },
-                        "first_name": {
-                            "bsonType": "string"
+
+                        last_name: {
+                            bsonType: "string"
                         },
-                        "last_name": {
-                            "bsonType": "string"
+
+                        email: {
+                            bsonType: "string",
+                            maxLength: 100
+                        },
+
+                        position: {
+                            bsonType: "object",
+
+                            properties: {
+                                position_name: {
+                                    bsonType: "string"
+                                }
+                            },
+
+                            additionalProperties: false,
+
+                            required: [
+                                "position_name"
+                            ]
                         }
                     },
-                    "additionalProperties": false
-                },
-                "operation_equipament": {
-                    "bsonType": "object",
-                    "properties": {
-                        "id_equipment": {
-                            "bsonType": "int"
-                        },
-                        "equipment_code": {
-                            "bsonType": "string"
-                        },
-                        "equipment_name": {
-                            "bsonType": "string"
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "process_measurement": {
-                    "bsonType": "array",
-                    "additionalItems": true,
-                    "items": [
-                        {
-                            "bsonType": "int"
-                        },
-                        {
-                            "bsonType": "double"
-                        },
-                        {
-                            "bsonType": "date"
-                        },
-                        {
-                            "bsonType": "binData"
-                        }
+
+                    additionalProperties: false,
+
+                    required: [
+                        "first_name",
+                        "last_name",
+                        "email",
+                        "position"
                     ]
                 },
-                "process_parameter": {
-                    "bsonType": "object",
-                    "properties": {
-                        "parameter_name": {
-                            "bsonType": "string"
+
+                work_shift: {
+                    bsonType: "object",
+
+                    properties: {
+                        shift_name: {
+                            bsonType: "string"
                         },
-                        "unit_of_measure": {
-                            "bsonType": "string"
+
+                        start_time: {
+                            bsonType: "date"
+                        },
+
+                        end_time: {
+                            bsonType: "date"
                         }
                     },
-                    "additionalProperties": false
+
+                    additionalProperties: false,
+
+                    required: [
+                        "shift_name",
+                        "start_time",
+                        "end_time"
+                    ]
                 },
-                "id_batch": {
-                    "bsonType": "int"
+
+                operation_equipment: {
+                    bsonType: "object",
+
+                    properties: {
+                        equipment_code: {
+                            bsonType: "string"
+                        },
+
+                        equipment_name: {
+                            bsonType: "string"
+                        },
+
+                        status: {
+                            bsonType: "string",
+                            maxLength: 30
+                        }
+                    },
+
+                    additionalProperties: false,
+
+                    required: [
+                        "equipment_code",
+                        "equipment_name",
+                        "status"
+                    ]
+                },
+
+                concentrate: {
+                    bsonType: "object",
+
+                    properties: {
+                        purity_percentage: {
+                            bsonType: "decimal"
+                        },
+
+                        weight_tons: {
+                            bsonType: "decimal"
+                        }
+                    },
+
+                    additionalProperties: false
+                },
+
+                tailings: {
+                    bsonType: "object",
+
+                    properties: {
+                        toxicity_level: {
+                            bsonType: "string",
+                            maxLength: 100
+                        },
+
+                        weight_tons: {
+                            bsonType: "decimal"
+                        }
+                    },
+
+                    additionalProperties: false
                 }
             },
-            "additionalProperties": false
+
+            additionalProperties: false,
+
+            required: [
+                "start_date_time",
+                "end_date_time",
+                "id_batch",
+                "worker",
+                "work_shift",
+                "operation_equipment"
+            ]
         }
     },
-    "validationLevel": "off",
-    "validationAction": "warn"
+
+    validationLevel: "strict",
+    validationAction: "error"
 });
