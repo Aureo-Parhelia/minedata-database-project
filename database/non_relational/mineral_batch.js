@@ -1,59 +1,91 @@
-
-use("MINEDATA_SOLUTION"); 
-
 db.createCollection("mineral_batch", {
-    "capped": false,
-    "validator": {
-        "$jsonSchema": {
-            "bsonType": "object",
-            "title": "mineral_batch",
-            "properties": {
-                "_id": {
-                    "bsonType": "objectId"
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            title: "mineral_batch",
+            properties: {
+                _id: {
+                    bsonType: "objectId"
                 },
-                "batch_code": {
-                    "bsonType": "string"
+
+                batch_code: {
+                    bsonType: "string"
                 },
-                "batch_weight_tons": {
-                    "bsonType": "double"
+
+                batch_weight_tons: {
+                    bsonType: "decimal"
                 },
-                "entry_status": {
-                    "bsonType": "string"
+
+                entry_status: {
+                    bsonType: "string"
                 },
-                "ganga": {
-                    "bsonType": "object",
-                    "properties": {
-                        "id_ganga": {
-                            "bsonType": "string"
+
+                mineral_reception: {
+                    bsonType: "object",
+
+                    properties: {
+                        reception_date: {
+                            bsonType: "date"
                         },
-                        "description": {
-                            "bsonType": "string"
+
+                        description: {
+                            bsonType: "string",
+                            maxLength: 300
+                        },
+
+                        ganga: {
+                            bsonType: "object",
+
+                            properties: {
+                                entry_date: {
+                                    bsonType: "date"
+                                },
+
+                                description: {
+                                    bsonType: "string"
+                                },
+
+                                origin_zone: {
+                                    bsonType: "string"
+                                },
+
+                                total_weight_tons: {
+                                    bsonType: "decimal"
+                                }
+                            },
+
+                            additionalProperties: false,
+
+                            required: [
+                                "entry_date",
+                                "description",
+                                "origin_zone",
+                                "total_weight_tons"
+                            ]
                         }
                     },
-                    "additionalProperties": false
-                },
-                "mineral_reception": {
-                    "bsonType": "object",
-                    "properties": {
-                        "id_reception": {
-                            "bsonType": "int"
-                        },
-                        "reception_date": {
-                            "bsonType": "string"
-                        }
-                    },
-                    "additionalProperties": false
+
+                    additionalProperties: false,
+
+                    required: [
+                        "reception_date",
+                        "description",
+                        "ganga"
+                    ]
                 }
             },
-            "additionalProperties": false,
-            "required": [
+
+            additionalProperties: false,
+
+            required: [
+                "batch_code",
                 "batch_weight_tons",
                 "entry_status",
-                "ganga",
                 "mineral_reception"
             ]
         }
     },
-    "validationLevel": "off",
-    "validationAction": "warn"
+
+    validationLevel: "strict",
+    validationAction: "error"
 });
