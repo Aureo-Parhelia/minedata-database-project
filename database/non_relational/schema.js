@@ -4,6 +4,8 @@
  ============================================================
 */
 
+use("minedata_nosql"); 
+
 db.createCollection("mineral_batch", {
     "capped": false,
     "validator": {
